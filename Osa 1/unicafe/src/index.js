@@ -1,21 +1,40 @@
 import React, { useState } from 'react'
 import ReactDOM from 'react-dom'
 
+const StatisticLine = ({text, value}) => {
+  return(
+    <tr>
+      <td>{text}</td>
+      <td>{value}</td>
+    </tr>
+  )
+}
+
 const Statistics = (props) => {
   const all = props.good + props.neutral + props.bad
   const avg = (props.good - props.bad)/all
-  const pos = props.good/all*100
+  const pos = [props.good/all*100, "%"].join(" ")
+  if (all === 0) {
+    return(
+      <div>
+        <h1>statistics</h1>
+        <h3>No feedback given</h3>
+      </div>
+    )
+  }
   return(
     <div>
       <h1>statistics</h1>
-      <p>
-        good {props.good} <br></br>
-        neutral {props.neutral} <br></br>
-        bad {props.bad} <br></br>
-        all {all} <br></br>
-        average {avg} <br></br>
-        positive {pos} % <br></br>
-      </p>
+      <table>
+        <tbody>
+          <StatisticLine text="good" value={props.good} />
+          <StatisticLine text="neutral" value={props.neutral} />
+          <StatisticLine text="bad" value={props.bad} />
+          <StatisticLine text="all" value={all} />
+          <StatisticLine text="average" value={avg} />
+          <StatisticLine text="positive" value={pos} />
+        </tbody>
+      </table>
     </div>)
 }
 
