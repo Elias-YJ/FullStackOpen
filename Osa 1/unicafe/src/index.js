@@ -2,12 +2,20 @@ import React, { useState } from 'react'
 import ReactDOM from 'react-dom'
 
 const Statistics = (props) => {
+  const all = props.good + props.neutral + props.bad
+  const avg = (props.good - props.bad)/all
+  const pos = props.good/all*100
   return(
     <div>
       <h1>statistics</h1>
-      <p>good {props.good}</p>
-      <p>neutral {props.neutral}</p>
-      <p>bad {props.bad}</p>
+      <p>
+        good {props.good} <br></br>
+        neutral {props.neutral} <br></br>
+        bad {props.bad} <br></br>
+        all {all} <br></br>
+        average {avg} <br></br>
+        positive {pos} % <br></br>
+      </p>
     </div>)
 }
 
