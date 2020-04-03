@@ -45,15 +45,12 @@ const InDepthCountry = ({country}) => {
 }
 
 const ListOfCountries = ({countries, handler}) => {
-  const handleButton = (element) => {
-    handler(countries.find((country) => country.name===element.target.value))
-  }
   return (
     <div>
       {countries.map(country =>
           <div key={country.name}>
             {country.name}
-            <button value={country.name} onClick={handleButton}>show</button>
+            <button value={country.name} onClick={() => handler(country)}>show</button>
           </div>
       )}
     </div>
