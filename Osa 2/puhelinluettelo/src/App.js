@@ -1,6 +1,24 @@
 import React, { useState, useEffect } from 'react'
 import numberService from './services/numbers'
 
+const Notification = ({ message, isError }) => {
+  if(message === null) {
+    return null
+  } else if (isError) {
+    return (
+      <div className="error">
+        {message}
+      </div>
+    )
+  } else {
+    return (
+      <div className="success">
+        {message}
+      </div>
+    )
+  }
+}
+
 const Filter = ({filter, handler}) => {
   return (
     <form>
@@ -45,6 +63,7 @@ const App = () => {
   const [ newName, setNewName ] = useState('')
   const [ newNumber, setNewNumber] = useState('')
   const [ newFilter, setNewFilter] = useState('')
+  const [ statusMessage, setStatusMessage] = useState({message: null, isError: false})
 
   useEffect(() => {
     numberService
@@ -81,6 +100,27 @@ const App = () => {
             setPersons(persons.map(person => person.id !== duplicates[0].id ? person : returnedInfo))
             setNewName('')
             setNewNumber('')
+            setStatusMessage({
+              message: `Number of ${returnedInfo.name} changed to ${returnedInfo.number}`,
+              isError: false
+              })
+            setTimeout(() => {
+              setStatusMessage({message:null, isError: false})
+            }, 2000)
+          })
+          .catch(error => {
+            const removedPerson = persons.filter(person => person.name === newName)[0]
+            setPersons(persons.filter(person => person.id !== removedPerson.id))
+            setStatusMessage({
+              message: `Information of ${removedPerson.name} has already been removed from the server`,
+              isError: true
+            })
+            setTimeout(() => {
+              setStatusMessage({
+                message: null,
+                isError: false
+              })
+            }, 2000)
           })
       }
     } else {
@@ -90,6 +130,15 @@ const App = () => {
           setPersons(persons.concat(data))
           setNewName('')
           setNewNumber('')
+          setStatusMessage({
+            message:`${data.name} added`,
+            isError: false
+          })
+          setTimeout(() => {
+            setStatusMessage({
+              message: null,
+              isError: false})
+          }, 2000)
         })
     }    
   }
@@ -99,13 +148,30 @@ const App = () => {
     .remove(id)
     .then(result => {
       setPersons(persons.filter(person => person.id !== id))
+      setStatusMessage({
+        message: `${persons.filter(person => person.id === id)[0].name} deleted`,
+        isError: false
+      })
+      setTimeout(() => {
+        setStatusMessage({
+          message: null,
+          isError: false
+        })
+      }, 2000)
     })
     .catch(error => {
       const removedPerson = persons.filter(person => person.id === id)[0]
       setPersons(persons.filter(person => person.id !== id))
-      alert(
-        `${removedPerson.name} was already deleted from the server`
-      )
+      setStatusMessage({
+        message: `${removedPerson.name} was already deleted`,
+        isError: true
+      })
+      setTimeout(() => {
+        setStatusMessage({
+          message: null,
+          isError: false
+        })
+      }, 2000)
       
     })
   }
@@ -115,7 +181,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-
+      <Notification message={statusMessage.message} isError={statusMessage.isError} />
       <Filter filter={newFilter} handler={handleFilterChange} />
 
       <h3>Add a new</h3>
