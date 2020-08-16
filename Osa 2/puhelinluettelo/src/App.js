@@ -140,6 +140,19 @@ const App = () => {
               isError: false})
           }, 2000)
         })
+        .catch(error => {
+          setStatusMessage({
+            message: `${error.response.data.error}`,
+            isError: true
+          })
+          setTimeout(() => {
+            setStatusMessage({
+              message: null,
+              isError: false
+            })
+          }, 5000)
+          console.log(error.response.data)
+        })
     }    
   }
   
