@@ -138,3 +138,56 @@ describe('most blogs', () => {
     })
   })
 })
+
+describe('most likes', () => {
+  const listWithOneBlog = [
+    {
+      _id: '5a422aa71b54a676234d17f8',
+      title: 'Go To Statement Considered Harmful',
+      author: 'Edsger W. Dijkstra',
+      url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
+      likes: 5,
+      __v: 0
+    }
+  ]
+
+  const listWithThreeBlogs = [
+    {
+      _id: '5a422aa71b54a676234d17f8',
+      title: 'Go To Statement Considered Harmful',
+      author: 'Edsger W. Dijkstra',
+      url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
+      likes: 5,
+      __v: 0
+    },
+    {
+      title: "Tarjoilusuositus",
+      author: "teddypunkkari",
+      url: "http://tarjoiluehdotus.blogspot.com/",
+      likes: 6
+    },
+    {
+      _id: '5a422aa71b54a676534d17f8',
+      title: 'Harmful',
+      author: 'Edsger W. Dijkstra',
+      url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
+      likes: 2,
+      __v: 0
+    }
+  ]
+  test('when list has only one author, that has the most likes', () => {
+    const result = listHelper.mostLikes(listWithOneBlog)
+    expect(result).toEqual({
+      author: 'Edsger W. Dijkstra',
+      likes: 5
+    })
+  })
+  test('when list has two authors, the one with most likes should be returned', () => {
+    const result = listHelper.mostLikes(listWithThreeBlogs)
+    expect(result).toEqual({
+      author: 'Edsger W. Dijkstra',
+      likes: 7
+    })
+  })
+})
+

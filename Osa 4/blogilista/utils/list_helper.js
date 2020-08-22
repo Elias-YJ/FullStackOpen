@@ -34,6 +34,20 @@ const mostBlogs = (blogs) => {
 }
 
 const mostLikes = (blogs) => {
+  const likeList = lodash.groupBy(blogs, 'author')
+  const sumReducer = (sum, blog) => {
+    return sum + blog.likes}
+  let formattedLikes = []
+  for (var author in likeList){
+    const newEntry = 
+    {
+      author: author,
+      likes: likeList[author].reduce(sumReducer, 0)
+    }
+    formattedLikes = [...formattedLikes, newEntry]
+  }
+  const max = formattedLikes.reduce((prev, current) => (prev.likes > current.likes) ? prev : current)
+  return max
 
 }
 
