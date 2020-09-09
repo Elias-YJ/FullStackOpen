@@ -54,6 +54,13 @@ const initialBlogs = [
     __v: 0 
   }
 ]
+const noLikesBlog = { 
+  _id: "5a422b891b54a676234d17fa", 
+  title: "No likes", 
+  author: "Bad Writer", 
+  url: "http://blog.cleancoder.com/uncle-bob/",  
+  __v: 0 
+}
 
 beforeEach(async () => {
   await Blog.deleteMany({})
@@ -92,6 +99,17 @@ test('blogs can be added', async () => {
   const response = await api.get('/api/blogs')
   expect(response.body).toHaveLength(3)
   expect(response.body[2].title).toBe(initialBlogs[2].title)
+})
+
+test('blogs with no likes can be added', async () => {
+  await api
+    .post('/api/blogs')
+    .send(noLikesBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+  const response = await api.get('/api/blogs')
+  expect(response.body).toHaveLength(3)
+  expect(response.body[2].likes).toBe(0)
 })
 
 afterAll(() => {
