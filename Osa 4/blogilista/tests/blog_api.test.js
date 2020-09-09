@@ -54,6 +54,7 @@ const initialBlogs = [
     __v: 0 
   }
 ]
+
 const noLikesBlog = { 
   _id: "5a422b891b54a676234d17fa", 
   title: "No likes", 
@@ -61,6 +62,23 @@ const noLikesBlog = {
   url: "http://blog.cleancoder.com/uncle-bob/",  
   __v: 0 
 }
+
+const noTitleBlog = { 
+  _id: "5a422bc61b54a676234d17fc", 
+  author: "Titleless Martin", 
+  url: "http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html", 
+  likes: 2, 
+  __v: 0 
+}
+
+const noUrlBlog = { 
+  _id: "5a422bc61b54a676234d17fc", 
+  title: "Where to find me ?", 
+  author: "Robert C. Martin", 
+  likes: 2, 
+  __v: 0 
+}
+
 
 beforeEach(async () => {
   await Blog.deleteMany({})
@@ -110,6 +128,24 @@ test('blogs with no likes can be added', async () => {
   const response = await api.get('/api/blogs')
   expect(response.body).toHaveLength(3)
   expect(response.body[2].likes).toBe(0)
+})
+
+test('blogs with no title cannot be added', async () => {
+  await api
+    .post('/api/blogs')
+    .send(noTitleBlog)
+    .expect(400)
+  const response = await api.get('/api/blogs')
+  expect(response.body).toHaveLength(2)
+})
+
+test('blogs with no url cannot be added', async () => {
+  await api
+    .post('/api/blogs')
+    .send(noUrlBlog)
+    .expect(400)
+  const response = await api.get('/api/blogs')
+  expect(response.body).toHaveLength(2)
 })
 
 afterAll(() => {
