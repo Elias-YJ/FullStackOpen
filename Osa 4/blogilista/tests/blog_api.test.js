@@ -148,6 +148,17 @@ test('blogs with no url cannot be added', async () => {
   expect(response.body).toHaveLength(2)
 })
 
+test('blog can be deleted', async () => {
+  const initialResponse = await api.get('/api/blogs')
+  const firstBlog = initialResponse.body[0]
+  await api
+    .delete(`/api/blogs/${firstBlog.id}`)
+    .expect(204)
+  const response = await api.get('/api/blogs')
+  expect(response.body).toHaveLength(1)
+})
+
+
 afterAll(() => {
   mongoose.connection.close()
 })
