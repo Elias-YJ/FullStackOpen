@@ -1,0 +1,9 @@
+PUT http://localhost:3003/api/blogs/5f397d60936c273bb4d15374
+Content-Type: application/json
+
+{
+    "title": "Tarjoilusuositus",
+    "author": "teddypunkkari",
+    "url": "http://tarjoiluehdotus.blogspot.com/",
+    "likes": 2
+}

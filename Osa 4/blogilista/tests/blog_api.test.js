@@ -158,6 +158,17 @@ test('blog can be deleted', async () => {
   expect(response.body).toHaveLength(1)
 })
 
+test('blog can be updated', async () => {
+  const initialResponse = await api.get('/api/blogs')
+  const firstBlog = initialResponse.body[0]
+  await api
+    .put(`/api/blogs/${firstBlog.id}`)
+    .send({...firstBlog, likes:1000})
+    .expect(200)
+  const response = await api.get('/api/blogs')
+  expect(response.body[0].likes).toBe(1000)
+})
+
 
 afterAll(() => {
   mongoose.connection.close()
