@@ -71,11 +71,14 @@ describe('When there are initially some blogs', () => {
   })
 
   describe('Adding new blogs', () => {
-
     test('blogs can be added', async () => {
+      const usersAtStart = await helper.usersInDb()
       await api
         .post('/api/blogs')
-        .send(extraBlog)
+        .send({
+          userId: usersAtStart[0].id,
+          ...extraBlog
+        })
         .expect(201)
         .expect('Content-Type', /application\/json/)
       const blogsAtEnd = await helper.blogsInDb()
@@ -84,9 +87,13 @@ describe('When there are initially some blogs', () => {
     })
 
     test('blogs with no likes can be added', async () => {
+      const usersAtStart = await helper.usersInDb()
       await api
         .post('/api/blogs')
-        .send(noLikesBlog)
+        .send({
+          userId: usersAtStart[0].id,
+          ...noLikesBlog
+        })
         .expect(201)
         .expect('Content-Type', /application\/json/)
         const blogsAtEnd = await helper.blogsInDb()
@@ -95,18 +102,25 @@ describe('When there are initially some blogs', () => {
     })
 
     test('blogs with no title cannot be added', async () => {
+      const usersAtStart = await helper.usersInDb()
       await api
         .post('/api/blogs')
-        .send(noTitleBlog)
+        .send({
+          userId: usersAtStart[0].id,
+          ...noTitleBlog})
         .expect(400)
         const blogsAtEnd = await helper.blogsInDb()
       expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
     })
 
     test('blogs with no url cannot be added', async () => {
+      const usersAtStart = await helper.usersInDb()
       await api
         .post('/api/blogs')
-        .send(noUrlBlog)
+        .send({
+          userId: usersAtStart[0].id,
+          ...noUrlBlog
+        })
         .expect(400)
       const blogsAtEnd = await helper.blogsInDb()
       expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
