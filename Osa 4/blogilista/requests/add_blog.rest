@@ -1,10 +1,10 @@
 POST http://localhost:3003/api/blogs
 Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1sdXVra2FpIiwiaWQiOiI1ZjY1Y2YwODQxNjM1MzRkMjhmNjlkN2UiLCJpYXQiOjE2MDA1MTYyNDZ9.-lnjVxqhXcIymr-2fTSO-_XDX_lSOF36uDRG7hwwKKc
 
 {
     "title": "Tarjoilusuositus",
     "author": "teddypunkkari",
     "url": "http://tarjoiluehdotus.blogspot.com/",
-    "likes": 1416,
-    "userId": "5f65cf084163534d28f69d7e"
+    "likes": 1416
 }
