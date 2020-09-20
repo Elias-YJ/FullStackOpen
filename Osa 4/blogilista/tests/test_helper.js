@@ -7,7 +7,8 @@ const initialBlogs = [
     title: "React patterns", 
     author: "Michael Chan", 
     url: "https://reactpatterns.com/", 
-    likes: 7, 
+    likes: 7,
+    user: "5f67087972db6e0e3cb8e5bd", 
     __v: 0 
   }, 
   { 
@@ -15,7 +16,8 @@ const initialBlogs = [
     title: "Go To Statement Considered Harmful", 
     author: "Edsger W. Dijkstra", 
     url: "http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html", 
-    likes: 5, 
+    likes: 5,
+    user: "5f65cf084163534d28f69d7e",
     __v: 0 
   }, 
   { 
@@ -61,7 +63,7 @@ const usersInDb = async () => {
   const users = await User.find({})
   return users.map(u => u.toJSON())
 }
-
+ 
 module.exports = {
   initialBlogs,
   blogsInDb,

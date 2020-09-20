@@ -1,6 +1,6 @@
 POST http://localhost:3003/api/blogs
 Content-Type: application/json
-Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1sdXVra2FpIiwiaWQiOiI1ZjY1Y2YwODQxNjM1MzRkMjhmNjlkN2UiLCJpYXQiOjE2MDA1MTYyNDZ9.-lnjVxqhXcIymr-2fTSO-_XDX_lSOF36uDRG7hwwKKc
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1sdXVra2FpIiwiaWQiOiI1ZjY1Y2YwODQxNjM1MzRkMjhmNjlkN2UiLCJpYXQiOjE2MDA1ODkzMTd9.7plm8qt9nHuO_OK2Z5HZHk_D6Om1-J3vk6g51Cm-BaA
 
 {
     "title": "Tarjoilusuositus",

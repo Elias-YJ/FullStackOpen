@@ -6,6 +6,7 @@ const bcrypt = require('bcrypt')
 const helper = require('./test_helper')
 const Blog = require('../models/blog')
 const User = require('../models/user')
+const { info } = require('../utils/logger')
 
 const extraBlog = { 
   _id: "5a422bc61b54a676234d17fc", 
@@ -69,16 +70,26 @@ describe('When there are initially some blogs', () => {
       expect(blog.id).toBeDefined()
     }
   })
+})
+describe('When there are initially blogs and a user', () => {
+  beforeEach(async () => {
+    await User.deleteMany({})
 
-  describe('Adding new blogs', () => {
+    const passwordHash = await bcrypt.hash('sekret', 10)
+    const user = new User({ _id: "5f67087972db6e0e3cb8e5bd", username: 'root', passwordHash })
+
+    await user.save()
+  })
+  describe('Adding new blogs with one user', () => {
     test('blogs can be added', async () => {
-      const usersAtStart = await helper.usersInDb()
+      const login = await api.post('/api/login').send({
+        username: "root",
+        password: "sekret"
+      })
       await api
         .post('/api/blogs')
-        .send({
-          userId: usersAtStart[0].id,
-          ...extraBlog
-        })
+        .set('Authorization', `bearer ${login.body.token}`)
+        .send(extraBlog)
         .expect(201)
         .expect('Content-Type', /application\/json/)
       const blogsAtEnd = await helper.blogsInDb()
@@ -87,54 +98,86 @@ describe('When there are initially some blogs', () => {
     })
 
     test('blogs with no likes can be added', async () => {
-      const usersAtStart = await helper.usersInDb()
+      const login = await api.post('/api/login').send({
+        username: "root",
+        password: "sekret"
+      })
       await api
         .post('/api/blogs')
-        .send({
-          userId: usersAtStart[0].id,
-          ...noLikesBlog
-        })
+        .set('Authorization', `bearer ${login.body.token}`)
+        .send(noLikesBlog)
         .expect(201)
         .expect('Content-Type', /application\/json/)
-        const blogsAtEnd = await helper.blogsInDb()
+      const blogsAtEnd = await helper.blogsInDb()
       expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length+1)
       expect(blogsAtEnd[helper.initialBlogs.length].likes).toBe(0)
     })
 
     test('blogs with no title cannot be added', async () => {
-      const usersAtStart = await helper.usersInDb()
+      const login = await api.post('/api/login').send({
+        username: "root",
+        password: "sekret"
+      })
       await api
         .post('/api/blogs')
-        .send({
-          userId: usersAtStart[0].id,
-          ...noTitleBlog})
+        .set('Authorization', `bearer ${login.body.token}`)
+        .send(noTitleBlog)
         .expect(400)
         const blogsAtEnd = await helper.blogsInDb()
       expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
     })
 
     test('blogs with no url cannot be added', async () => {
-      const usersAtStart = await helper.usersInDb()
+      const login = await api.post('/api/login').send({
+        username: "root",
+        password: "sekret"
+      })
       await api
         .post('/api/blogs')
-        .send({
-          userId: usersAtStart[0].id,
-          ...noUrlBlog
-        })
+        .set('Authorization', `bearer ${login.body.token}`)
+        .send(noUrlBlog)
         .expect(400)
+      const blogsAtEnd = await helper.blogsInDb()
+      expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
+    })
+
+    test('blogs cannot be added without authorization', async () => {
+      await api
+        .post('/api/blogs')
+        .send(extraBlog)
+        .expect(401)
+        .expect('Content-Type', /application\/json/)
       const blogsAtEnd = await helper.blogsInDb()
       expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
     })
   })
   describe('Deleting a blog', () => {
-    test('blog can be deleted', async () => {
-      const initialResponse = await api.get('/api/blogs')
-      const firstBlog = initialResponse.body[0]
+    test('blog can be deleted given it was added by the user', async () => {
+      const initialBlogs = await helper.blogsInDb()
+      const login = await api.post('/api/login').send({
+        username: "root",
+        password: "sekret"
+      })
       await api
-        .delete(`/api/blogs/${firstBlog.id}`)
+        .delete(`/api/blogs/${initialBlogs[0].id}`)
+        .set('Authorization', `bearer ${login.body.token}`)
         .expect(204)
-        const blogsAtEnd = await helper.blogsInDb()
+      const blogsAtEnd = await helper.blogsInDb()
       expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length-1)
+    })
+
+    test('blog cannot be deleted when it was added by another user', async () => {
+      const initialBlogs = await helper.blogsInDb()
+      const login = await api.post('/api/login').send({
+        username: "root",
+        password: "sekret"
+      })
+      await api
+        .delete(`/api/blogs/${initialBlogs[1].id}`)
+        .set('Authorization', `bearer ${login.body.token}`)
+        .expect(401)
+      const blogsAtEnd = await helper.blogsInDb()
+      expect(blogsAtEnd).toHaveLength(initialBlogs.length)
     })
   })
   describe('Updating a blog', () => {
@@ -149,40 +192,27 @@ describe('When there are initially some blogs', () => {
       expect(blogsAtEnd[0].likes).toBe(1000)
     })
   })
-})
+  describe('Creating a new user', () => {
+    test('creation succeeds with a fresh username', async () => {
+      const usersAtStart = await helper.usersInDb()
+      const newUser = {
+        username: 'mluukkai',
+        name: 'Matti Luukkainen',
+        password: 'salainen',
+      }
+      await api
+        .post('/api/users')
+        .send(newUser)
+        .expect(200)
+        .expect('Content-Type', /application\/json/)
 
-describe('when there is initially one user at db', () => {
-  beforeEach(async () => {
-    await User.deleteMany({})
+      const usersAtEnd = await helper.usersInDb()
+      expect(usersAtEnd).toHaveLength(usersAtStart.length + 1)
 
-    const passwordHash = await bcrypt.hash('sekret', 10)
-    const user = new User({ username: 'root', passwordHash })
-
-    await user.save()
+      const usernames = usersAtEnd.map(u => u.username)
+      expect(usernames).toContain(newUser.username)
+    })
   })
-
-  test('creation succeeds with a fresh username', async () => {
-    const usersAtStart = await helper.usersInDb()
-
-    const newUser = {
-      username: 'mluukkai',
-      name: 'Matti Luukkainen',
-      password: 'salainen',
-    }
-
-    await api
-      .post('/api/users')
-      .send(newUser)
-      .expect(200)
-      .expect('Content-Type', /application\/json/)
-
-    const usersAtEnd = await helper.usersInDb()
-    expect(usersAtEnd).toHaveLength(usersAtStart.length + 1)
-
-    const usernames = usersAtEnd.map(u => u.username)
-    expect(usernames).toContain(newUser.username)
-  })
-
   describe('Username and password must fill criteria', () => {
     test('creation fails with proper statuscode and message if username already taken', async () => {
       const usersAtStart = await helper.usersInDb()
@@ -272,7 +302,6 @@ describe('when there is initially one user at db', () => {
     })
   })
 })
-
 
 afterAll(() => {
   mongoose.connection.close()
