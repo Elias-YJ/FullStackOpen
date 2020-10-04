@@ -10,8 +10,6 @@ import loginService from './services/login'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  const [newBlog, setNewBlog] = useState({
-    title: '', author: '', url: ''})
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
@@ -38,7 +36,6 @@ const App = () => {
       const user = await loginService.login({
         username, password,
       })
-      console.log(JSON.stringify(user))
 
       window.localStorage.setItem(
         'loggedBlogappUser', JSON.stringify(user)
@@ -85,8 +82,16 @@ const App = () => {
     }
   }
 
-  const handleBlogChange = (changedProperty) => {
-      setNewBlog({...newBlog, ...changedProperty})
+  const addLike = async (blogObject) => {
+    try {
+      const returnedBlog = await blogService.update({...blogObject, likes: blogObject.likes+1, user:blogObject.user.id})
+      setBlogs(blogs.map(blog => blog.id !== blogObject.id ? blog : {...blog, likes: returnedBlog.likes}))
+    } catch {
+      setStatusMessage({message: 'unable to like', isError: true})
+      setTimeout(() => {
+        setStatusMessage({message:'', isError: false})
+      }, 2000)
+    }
   }
 
   const credentials = {
@@ -116,8 +121,8 @@ const App = () => {
       <Togglable buttonLabel="new note">
         <AddBlog addBlog={addBlog} />
       </Togglable>
-      {blogs.map(blog =>
-        <ExpandableBlog blog={blog} />
+      {blogs.map((blog, i) =>
+        <ExpandableBlog key={i} blog={blog} addLike={addLike} />
       )}
     </div>
   )
