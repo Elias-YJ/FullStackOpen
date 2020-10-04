@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useState} from 'react'
 
 const Title = ({ title, changeHandler }) => (
   <div>
@@ -36,13 +36,28 @@ const Url = ({ url, changeHandler }) => (
   </div>
 )
 
-const AddBlog = (({blog, addHandler, changeHandler}) => {
+const AddBlog = (({ addBlog }) => {
+  const [newBlog, setNewBlog] = useState({title: '', author: '', url: ''})
+  
+  const handleAddBlog = async (event) => {
+    event.preventDefault()
+    addBlog(newBlog)
+    setNewBlog({
+      title: "",
+      author: "",
+      url: ""
+    })
+  }
+
+  const handleBlogChange = (changedProperty) => {
+    setNewBlog({...newBlog, ...changedProperty})
+  }
 
   return (
-    <form onSubmit={addHandler} method='post'>
-        <Title title={blog.title} changeHandler={changeHandler}/>
-        <Author author={blog.author} changeHandler={changeHandler}/>
-        <Url url={blog.url} changeHandler={changeHandler}/>
+    <form onSubmit={handleAddBlog} method='post'>
+        <Title title={newBlog.title} changeHandler={handleBlogChange}/>
+        <Author author={newBlog.author} changeHandler={handleBlogChange}/>
+        <Url url={newBlog.url} changeHandler={handleBlogChange}/>
         <button type="submit">create</button>
     </form>
   )

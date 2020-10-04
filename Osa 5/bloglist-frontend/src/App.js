@@ -69,18 +69,11 @@ const App = () => {
     }
   }
 
-  const handleAddBlog = async (event) => {
-    event.preventDefault()
+  const addBlog = async (blogObject) => {
     try {
-      const addedBlog = newBlog
-      const blog = await blogService.create(newBlog)
+      const blog = await blogService.create(blogObject)
       setBlogs(blogs.concat(blog))
-      setNewBlog({
-        title: "",
-        author: "",
-        url: ""
-      })
-      setStatusMessage({message: `Successfully added ${addedBlog.title} by ${addedBlog.author}`, isError: false})
+      setStatusMessage({message: `Successfully added ${blogObject.title} by ${blogObject.author}`, isError: false})
       setTimeout(() => {
         setStatusMessage({message:'', isError: false})
       }, 3000)
@@ -121,7 +114,7 @@ const App = () => {
       <StatusMessage statusMessage={statusMessage}/>
       <Logout name={user.name} logoutHandler={handleLogout}/>
       <Togglable buttonLabel="new note">
-        <AddBlog blog={newBlog} addHandler={handleAddBlog} changeHandler={handleBlogChange}/>
+        <AddBlog addBlog={addBlog} />
       </Togglable>
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
