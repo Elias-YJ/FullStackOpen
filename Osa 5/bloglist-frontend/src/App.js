@@ -4,6 +4,7 @@ import Blog from './components/Blog'
 import Login from './components/Login'
 import Logout from './components/Logout'
 import StatusMessage from './components/StatusMessage'
+import Togglable from './components/Togglable'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
@@ -119,7 +120,9 @@ const App = () => {
       <h2>blogs</h2>
       <StatusMessage statusMessage={statusMessage}/>
       <Logout name={user.name} logoutHandler={handleLogout}/>
-      <AddBlog blog={newBlog} addHandler={handleAddBlog} changeHandler={handleBlogChange}/>
+      <Togglable buttonLabel="new note">
+        <AddBlog blog={newBlog} addHandler={handleAddBlog} changeHandler={handleBlogChange}/>
+      </Togglable>
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
       )}
