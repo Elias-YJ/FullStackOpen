@@ -37,6 +37,7 @@ const App = () => {
       const user = await loginService.login({
         username, password,
       })
+      console.log(JSON.stringify(user))
 
       window.localStorage.setItem(
         'loggedBlogappUser', JSON.stringify(user)
@@ -47,7 +48,7 @@ const App = () => {
       setPassword('')
       setUser(user)
     } catch (exception) {
-      setStatusMessage({message:'wrong credentials', isError: true})
+      setStatusMessage({message:'Incorrect username or password', isError: true})
       setTimeout(() => {
         setStatusMessage({message:'', isError: false})
       }, 2000)
@@ -70,7 +71,7 @@ const App = () => {
   const handleAddBlog = async (event) => {
     event.preventDefault()
     try {
-      console.log('creating')
+      const addedBlog = newBlog
       const blog = await blogService.create(newBlog)
       setBlogs(blogs.concat(blog))
       setNewBlog({
@@ -78,10 +79,10 @@ const App = () => {
         author: "",
         url: ""
       })
-      setStatusMessage({message: 'adding a blog was successful', isError: false})
+      setStatusMessage({message: `Successfully added ${addedBlog.title} by ${addedBlog.author}`, isError: false})
       setTimeout(() => {
         setStatusMessage({message:'', isError: false})
-      }, 2000)
+      }, 3000)
     } catch (exception) {
       setStatusMessage({message: 'adding a blog failed', isError: true})
       setTimeout(() => {
@@ -108,6 +109,7 @@ const App = () => {
     return (
       <div>
         <h2>Log in to application</h2>
+        <StatusMessage statusMessage={statusMessage}/>
         <Login credentials={credentials} loginHandler={handleLogin} />
       </div>
     )
