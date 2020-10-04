@@ -26,7 +26,7 @@ const Password = ({ password, changeHandler }) => (
 
 const Login = (({ credentials, loginHandler }) => {
   return(
-    <form onSubmit={loginHandler}>
+    <form onSubmit={loginHandler} method='post'>
         <Username username={credentials.username.text} changeHandler={credentials.username.handler}/>
         <Password password={credentials.password.text} changeHandler={credentials.password.handler}/>
         <button type="submit">login</button>
