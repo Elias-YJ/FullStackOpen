@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import AddBlog from './components/AddBlog'
-import Blog from './components/Blog'
+import ExpandableBlog from './components/ExpandableBlog'
 import Login from './components/Login'
 import Logout from './components/Logout'
 import StatusMessage from './components/StatusMessage'
@@ -117,7 +117,7 @@ const App = () => {
         <AddBlog addBlog={addBlog} />
       </Togglable>
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+        <ExpandableBlog blog={blog} />
       )}
     </div>
   )
