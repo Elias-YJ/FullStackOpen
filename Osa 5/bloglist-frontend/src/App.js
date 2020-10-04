@@ -3,19 +3,18 @@ import AddBlog from './components/AddBlog'
 import Blog from './components/Blog'
 import Login from './components/Login'
 import Logout from './components/Logout'
+import StatusMessage from './components/StatusMessage'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [newBlog, setNewBlog] = useState({
-    title: "",
-    author: "",
-    url: ""
-  })
+    title: '', author: '', url: ''})
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
+  const [statusMessage, setStatusMessage] = useState({message: '', isError: false})
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -48,10 +47,10 @@ const App = () => {
       setPassword('')
       setUser(user)
     } catch (exception) {
-      //setErrorMessage('wrong credentials')
-      //setTimeout(() => {
-      //  setErrorMessage(null)
-      //}, 5000)
+      setStatusMessage({message:'wrong credentials', isError: true})
+      setTimeout(() => {
+        setStatusMessage({message:'', isError: false})
+      }, 2000)
     }
   }
 
@@ -61,10 +60,10 @@ const App = () => {
       window.localStorage.removeItem('loggedBlogappUser')
       setUser(null)
     } catch (exception) {
-      //setErrorMessage('logout not successful')
-      //setTimeout(() => {
-      //  setErrorMessage(null)
-      //}, 5000)
+      setStatusMessage({message:'logout not successful', isError: true})
+      setTimeout(() => {
+        setStatusMessage({message:'', isError: false})
+      }, 2000)
     }
   }
 
@@ -79,13 +78,15 @@ const App = () => {
         author: "",
         url: ""
       })
+      setStatusMessage({message: 'adding a blog was successful', isError: false})
+      setTimeout(() => {
+        setStatusMessage({message:'', isError: false})
+      }, 2000)
     } catch (exception) {
-      console.log('error')
-      console.log(JSON.stringify(exception))
-      //setErrorMessage('adding a blog failed')
-      //setTimeout(() => {
-      //  setErrorMessage(null)
-      //}, 5000)
+      setStatusMessage({message: 'adding a blog failed', isError: true})
+      setTimeout(() => {
+        setStatusMessage({message:'', isError: false})
+      }, 2000)
     }
   }
 
@@ -114,6 +115,7 @@ const App = () => {
   return (
     <div>
       <h2>blogs</h2>
+      <StatusMessage statusMessage={statusMessage}/>
       <Logout name={user.name} logoutHandler={handleLogout}/>
       <AddBlog blog={newBlog} addHandler={handleAddBlog} changeHandler={handleBlogChange}/>
       {blogs.map(blog =>
