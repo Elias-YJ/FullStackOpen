@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import AddBlog from './components/AddBlog'
 import Blog from './components/Blog'
 import Login from './components/Login'
 import Logout from './components/Logout'
@@ -7,6 +8,11 @@ import loginService from './services/login'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
+  const [newBlog, setNewBlog] = useState({
+    title: "",
+    author: "",
+    url: ""
+  })
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
@@ -54,12 +60,37 @@ const App = () => {
     try {
       window.localStorage.removeItem('loggedBlogappUser')
       setUser(null)
-    } catch {
+    } catch (exception) {
       //setErrorMessage('logout not successful')
       //setTimeout(() => {
       //  setErrorMessage(null)
       //}, 5000)
     }
+  }
+
+  const handleAddBlog = async (event) => {
+    event.preventDefault()
+    try {
+      console.log('creating')
+      const blog = await blogService.create(newBlog)
+      setBlogs(blogs.concat(blog))
+      setNewBlog({
+        title: "",
+        author: "",
+        url: ""
+      })
+    } catch (exception) {
+      console.log('error')
+      console.log(JSON.stringify(exception))
+      //setErrorMessage('adding a blog failed')
+      //setTimeout(() => {
+      //  setErrorMessage(null)
+      //}, 5000)
+    }
+  }
+
+  const handleBlogChange = (changedProperty) => {
+      setNewBlog({...newBlog, ...changedProperty})
   }
 
   const credentials = {
@@ -84,6 +115,7 @@ const App = () => {
     <div>
       <h2>blogs</h2>
       <Logout name={user.name} logoutHandler={handleLogout}/>
+      <AddBlog blog={newBlog} addHandler={handleAddBlog} changeHandler={handleBlogChange}/>
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
       )}
