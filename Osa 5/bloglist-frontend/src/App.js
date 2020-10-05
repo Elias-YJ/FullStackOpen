@@ -16,18 +16,18 @@ const App = () => {
   const [statusMessage, setStatusMessage] = useState({message: '', isError: false})
 
   useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlogs( blogs )
-    )  
-  }, [])
-
-  useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
       setUser(user)
       blogService.setToken(user.token)
     }
+  }, [])
+
+  useEffect(() => {
+    blogService.getAll().then(blogs =>
+      setBlogs( blogs )
+    )  
   }, [])
 
   const handleLogin = async (event) => {
@@ -82,6 +82,19 @@ const App = () => {
     }
   }
 
+  const removeBlog = async (blogToRemove) => {
+    try {
+      if (window.confirm(`Do you really want to remove ${blogToRemove.title}?`))
+        await blogService.remove(blogToRemove.id)
+        setBlogs(blogs.filter(blog => blog.id !== blogToRemove.id))
+    } catch (exception) {
+      setStatusMessage({message: 'deleting the blog was not successful', isError: true})
+      setTimeout(() => {
+        setStatusMessage({message:'', isError: false})
+      }, 2000)
+    }
+  }
+
   const addLike = async (blogObject) => {
     try {
       const returnedBlog = await blogService.update({...blogObject, likes: blogObject.likes+1, user:blogObject.user.id})
@@ -92,6 +105,10 @@ const App = () => {
         setStatusMessage({message:'', isError: false})
       }, 2000)
     }
+  }
+
+  const correctUser = (userInfo) => {
+    return user && (user.username === userInfo.username) && (user.name === userInfo.name)
   }
 
   const credentials = {
@@ -122,7 +139,7 @@ const App = () => {
         <AddBlog addBlog={addBlog} />
       </Togglable>
       {blogs.sort((a,b) => b.likes-a.likes).map((blog, i) =>
-        <ExpandableBlog key={i} blog={blog} addLike={addLike} />
+        <ExpandableBlog key={i} blog={blog} userCheck={correctUser} addLike={addLike} removeBlog={removeBlog}/>
       )}
     </div>
   )
