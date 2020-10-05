@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 
-const RemoveButton = ({userCheck, blog, removeBlog}) => {
-  if (userCheck({username: blog.user.username, name: blog.user.name})) {
+const RemoveButton = ({ userCheck, blog, removeBlog }) => {
+  if (userCheck({ username: blog.user.username, name: blog.user.name })) {
     return (
       <button onClick={() => removeBlog(blog)}>remove</button>
     )
@@ -16,7 +16,7 @@ const ExpandableBlog = ({ blog, userCheck, addLike, removeBlog }) => {
   const [visible, setVisible] = useState(false)
 
   const hideWhenVisible = {
-    display: visible ? 'none' : '', 
+    display: visible ? 'none' : '',
     border: 'solid',
     borderWidth: 1
   }

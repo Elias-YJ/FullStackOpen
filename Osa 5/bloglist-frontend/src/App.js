@@ -13,7 +13,7 @@ const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-  const [statusMessage, setStatusMessage] = useState({message: '', isError: false})
+  const [statusMessage, setStatusMessage] = useState({ message: '', isError: false })
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
@@ -27,7 +27,7 @@ const App = () => {
   useEffect(() => {
     blogService.getAll().then(blogs =>
       setBlogs( blogs )
-    )  
+    )
   }, [])
 
   const handleLogin = async (event) => {
@@ -46,9 +46,9 @@ const App = () => {
       setPassword('')
       setUser(user)
     } catch (exception) {
-      setStatusMessage({message:'Incorrect username or password', isError: true})
+      setStatusMessage({ message:'Incorrect username or password', isError: true })
       setTimeout(() => {
-        setStatusMessage({message:'', isError: false})
+        setStatusMessage({ message:'', isError: false })
       }, 2000)
     }
   }
@@ -59,9 +59,9 @@ const App = () => {
       window.localStorage.removeItem('loggedBlogappUser')
       setUser(null)
     } catch (exception) {
-      setStatusMessage({message:'logout not successful', isError: true})
+      setStatusMessage({ message:'logout not successful', isError: true })
       setTimeout(() => {
-        setStatusMessage({message:'', isError: false})
+        setStatusMessage({ message:'', isError: false })
       }, 2000)
     }
   }
@@ -70,14 +70,14 @@ const App = () => {
     try {
       const blog = await blogService.create(blogObject)
       setBlogs(blogs.concat(blog))
-      setStatusMessage({message: `Successfully added ${blogObject.title} by ${blogObject.author}`, isError: false})
+      setStatusMessage({ message: `Successfully added ${blogObject.title} by ${blogObject.author}`, isError: false })
       setTimeout(() => {
-        setStatusMessage({message:'', isError: false})
+        setStatusMessage({ message:'', isError: false })
       }, 3000)
     } catch (exception) {
-      setStatusMessage({message: 'adding a blog failed', isError: true})
+      setStatusMessage({ message: 'adding a blog failed', isError: true })
       setTimeout(() => {
-        setStatusMessage({message:'', isError: false})
+        setStatusMessage({ message:'', isError: false })
       }, 2000)
     }
   }
@@ -86,23 +86,23 @@ const App = () => {
     try {
       if (window.confirm(`Do you really want to remove ${blogToRemove.title}?`))
         await blogService.remove(blogToRemove.id)
-        setBlogs(blogs.filter(blog => blog.id !== blogToRemove.id))
+      setBlogs(blogs.filter(blog => blog.id !== blogToRemove.id))
     } catch (exception) {
-      setStatusMessage({message: 'deleting the blog was not successful', isError: true})
+      setStatusMessage({ message: 'deleting the blog was not successful', isError: true })
       setTimeout(() => {
-        setStatusMessage({message:'', isError: false})
+        setStatusMessage({ message:'', isError: false })
       }, 2000)
     }
   }
 
   const addLike = async (blogObject) => {
     try {
-      const returnedBlog = await blogService.update({...blogObject, likes: blogObject.likes+1, user:blogObject.user.id})
-      setBlogs(blogs.map(blog => blog.id !== blogObject.id ? blog : {...blog, likes: returnedBlog.likes}))
-    } catch {
-      setStatusMessage({message: 'unable to like', isError: true})
+      const returnedBlog = await blogService.update({ ...blogObject, likes: blogObject.likes+1, user:blogObject.user.id })
+      setBlogs(blogs.map(blog => blog.id !== blogObject.id ? blog : { ...blog, likes: returnedBlog.likes }))
+    } catch (exception) {
+      setStatusMessage({ message: 'unable to like', isError: true })
       setTimeout(() => {
-        setStatusMessage({message:'', isError: false})
+        setStatusMessage({ message:'', isError: false })
       }, 2000)
     }
   }
@@ -113,7 +113,7 @@ const App = () => {
 
   const credentials = {
     username: {
-      text: username, 
+      text: username,
       handler: setUsername
     },
     password: {

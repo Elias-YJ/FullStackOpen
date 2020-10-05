@@ -1,5 +1,5 @@
 import React from 'react'
-const StatusMessage = (({statusMessage}) => {
+const StatusMessage = (({ statusMessage }) => {
   if (statusMessage.message.length===0) {
     return null
   } else if (statusMessage.isError) {

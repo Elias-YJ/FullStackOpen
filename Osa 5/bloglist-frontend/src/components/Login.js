@@ -1,9 +1,10 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 
 const Username = ({ username, changeHandler }) => (
   <div>
     username
-      <input
+    <input
       type="text"
       value={username}
       name="Username"
@@ -15,7 +16,7 @@ const Username = ({ username, changeHandler }) => (
 const Password = ({ password, changeHandler }) => (
   <div>
     password
-      <input
+    <input
       type="password"
       value={password}
       name="Password"
@@ -27,10 +28,16 @@ const Password = ({ password, changeHandler }) => (
 const Login = (({ credentials, loginHandler }) => {
   return(
     <form onSubmit={loginHandler} method='post'>
-        <Username username={credentials.username.text} changeHandler={credentials.username.handler}/>
-        <Password password={credentials.password.text} changeHandler={credentials.password.handler}/>
-        <button type="submit">login</button>
+      <Username username={credentials.username.text} changeHandler={credentials.username.handler}/>
+      <Password password={credentials.password.text} changeHandler={credentials.password.handler}/>
+      <button type="submit">login</button>
     </form>
   )
 })
+
+Login.propTypes = {
+  credentials: PropTypes.object.isRequired,
+  loginHandler: PropTypes.func.isRequired
+}
+
 export default Login
