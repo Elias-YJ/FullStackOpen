@@ -118,10 +118,10 @@ const App = () => {
       <h2>blogs</h2>
       <StatusMessage statusMessage={statusMessage}/>
       <Logout name={user.name} logoutHandler={handleLogout}/>
-      <Togglable buttonLabel="new note">
+      <Togglable buttonLabel="new blog">
         <AddBlog addBlog={addBlog} />
       </Togglable>
-      {blogs.map((blog, i) =>
+      {blogs.sort((a,b) => b.likes-a.likes).map((blog, i) =>
         <ExpandableBlog key={i} blog={blog} addLike={addLike} />
       )}
     </div>
