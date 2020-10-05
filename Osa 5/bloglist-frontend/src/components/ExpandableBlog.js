@@ -35,7 +35,7 @@ const ExpandableBlog = ({ blog, userCheck, addLike, removeBlog }) => {
       <div style={hideWhenVisible}>
         <div>{blog.title} {blog.author}<button onClick={toggleVisibility}>view</button></div>
       </div>
-      <div style={showWhenVisible}>
+      <div style={showWhenVisible} className="togglableContent">
         <div>{blog.title} {blog.author}<button onClick={toggleVisibility}>hide</button></div>
         <div>{blog.url}</div>
         <div>{blog.likes}<button onClick={() => addLike(blog)}>like</button></div>
