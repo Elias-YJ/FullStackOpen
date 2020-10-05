@@ -4,6 +4,7 @@ const Title = ({ title, changeHandler }) => (
   <div>
     title:
     <input
+      className="title"
       type="text"
       value={title}
       name="title"
@@ -16,6 +17,7 @@ const Author = ({ author, changeHandler }) => (
   <div>
     author:
     <input
+      className="author"
       type="text"
       value={author}
       name="author"
@@ -28,6 +30,7 @@ const Url = ({ url, changeHandler }) => (
   <div>
     url:
     <input
+      className="url"
       type="text"
       value={url}
       name="url"
