@@ -1,3 +1,5 @@
+const { func } = require("prop-types")
+
 describe('Blog app', function() {
   beforeEach(function() {
     cy.request('POST', 'http://localhost:3001/api/testing/reset')
@@ -21,7 +23,7 @@ describe('Blog app', function() {
       cy.get('#password').type('salainen')
       cy.get('#login-button').click()
 
-      cy.contains('blogs')
+      cy.contains('Matti Luukkainen logged in')
     })
 
     it('fails with incorrect credentials', function() {
@@ -31,5 +33,32 @@ describe('Blog app', function() {
 
       cy.contains('Incorrect')
     })
+  })
+
+  describe('When logged in', function() {
+    beforeEach(function() {
+      cy.login({ username: 'mluukkai', password: 'salainen' })
+    })
+
+    it('A blog can be created', function() {
+      cy.contains('new blog').click()
+      cy.get('#title-input').type('Mato Matalan seikkailut')
+      cy.get('#author-input').type('Richard Scarry')
+      cy.get('#url-input').type('www.richardscarry.com')
+      cy.get('#create-blog').click()
+
+      cy.contains('Mato Matalan seikkailut Richard Scarry')
+    })
+
+    it('A blog can be created with command', function() {
+      cy.createBlog({ 
+        title:'Mato Matalan seikkailut', 
+        author:'Richard Scarry', 
+        url:'www.richardscarry.com'
+      })
+
+      cy.contains('Mato Matalan seikkailut Richard Scarry')
+    })
+
   })
 })

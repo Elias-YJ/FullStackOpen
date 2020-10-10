@@ -4,6 +4,7 @@ const Title = ({ title, changeHandler }) => (
   <div>
     title:
     <input
+      id="title-input"
       className="title"
       type="text"
       value={title}
@@ -17,6 +18,7 @@ const Author = ({ author, changeHandler }) => (
   <div>
     author:
     <input
+      id="author-input"
       className="author"
       type="text"
       value={author}
@@ -30,6 +32,7 @@ const Url = ({ url, changeHandler }) => (
   <div>
     url:
     <input
+      id="url-input"
       className="url"
       type="text"
       value={url}
@@ -61,7 +64,7 @@ const AddBlog = (({ addBlog }) => {
       <Title title={newBlog.title} changeHandler={handleBlogChange}/>
       <Author author={newBlog.author} changeHandler={handleBlogChange}/>
       <Url url={newBlog.url} changeHandler={handleBlogChange}/>
-      <button type="submit">create</button>
+      <button id="create-blog" type="submit">create</button>
     </form>
   )
 })
