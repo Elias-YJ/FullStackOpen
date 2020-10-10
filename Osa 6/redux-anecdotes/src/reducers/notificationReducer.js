@@ -14,6 +14,20 @@ export const removeNotification = () => {
   }
 }
 
+export const setNotification = (content, time) => {
+  return async dispatch => {
+    dispatch({
+      type: 'NOTIFICATION',
+      data: content
+    })
+    await new Promise(resolve => setTimeout(resolve, 1000*time))
+    dispatch({
+      type: 'RM_NOTIFICATION',
+      data: ''
+    })
+  }
+}
+
 const reducer = (state = initialNotification, action) => {
   switch(action.type) {
     case 'NOTIFICATION':
