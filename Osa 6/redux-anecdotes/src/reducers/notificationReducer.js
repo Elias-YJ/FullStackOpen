@@ -1,29 +1,20 @@
-const initialNotification = ''
-
-export const notify = (content) => {
-  return {
-    type: 'NOTIFICATION',
-    data: content
-  }
-}
-
-export const removeNotification = () => {
-  return {
-    type: 'RM_NOTIFICATION',
-    data: ''
-  }
-}
+const initialNotification = {content: '', timeoutId: null}
 
 export const setNotification = (content, time) => {
-  return async dispatch => {
+  return dispatch => {
+    const timeoutId = setTimeout(() => dispatch({
+      type: 'RM_NOTIFICATION',
+      data: {
+        content: '',
+        timeoutId: null
+      }
+    }), 1000*time)
     dispatch({
       type: 'NOTIFICATION',
-      data: content
-    })
-    await new Promise(resolve => setTimeout(resolve, 1000*time))
-    dispatch({
-      type: 'RM_NOTIFICATION',
-      data: ''
+      data: {
+        content,
+        timeoutId,
+      }
     })
   }
 }
@@ -31,6 +22,9 @@ export const setNotification = (content, time) => {
 const reducer = (state = initialNotification, action) => {
   switch(action.type) {
     case 'NOTIFICATION':
+      if (state.timeoutId) {
+        clearTimeout(state.timeoutId)
+      }
       return action.data
     case 'RM_NOTIFICATION':
       return action.data

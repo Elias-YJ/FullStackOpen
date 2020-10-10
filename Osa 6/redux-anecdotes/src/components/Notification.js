@@ -6,12 +6,12 @@ const Notification = (props) => {
     border: 'solid',
     padding: 10,
     borderWidth: 1,
-    display: props.notification.length===0 ? 'none' : ''
+    display: props.notification.content.length===0 ? 'none' : ''
   }
 
   return (
     <div style={style}>
-      {props.notification}
+      {props.notification.content}
     </div>
   )
 }
