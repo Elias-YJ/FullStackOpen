@@ -19,7 +19,7 @@ const Anecdote = ({ anecdote, handleVote }) => {
 }
 
 const AnecdoteList = () => {
-  const anecdotes = useSelector(state => state)
+  const anecdotes = useSelector(({notification, anecdotes}) => anecdotes)
   const dispatch = useDispatch()
   
   const addVote = (id) => {
