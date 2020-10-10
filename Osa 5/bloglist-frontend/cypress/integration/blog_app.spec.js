@@ -1,3 +1,4 @@
+const { hasUncaughtExceptionCaptureCallback } = require("process")
 const { func } = require("prop-types")
 
 describe('Blog app', function() {
@@ -69,6 +70,24 @@ describe('Blog app', function() {
           .contains('view').click()
 
         cy.contains('Jukan vaalipeli').parent().parent().find('#likes').as('likeContainer').find('button').click()
+      })
+      it('A blog can be removed', function() {
+        cy.server();
+
+        cy.route({
+          method: "DELETE",
+          url: '**/blogs/**'
+        }).as("route_delete")
+
+        cy.contains('Mato Matalan seikkailu')
+          .contains('view').click()
+
+        cy.contains('Mato Matalan seikkailu').parent().parent().contains('remove').click()
+        cy.wait('@route_delete')
+        cy.get('.togglableContent')
+        .then( blogs => {
+          expect(blogs).to.have.length(1)
+        })
       })
     })
   })

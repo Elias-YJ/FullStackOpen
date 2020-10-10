@@ -84,9 +84,11 @@ const App = () => {
 
   const removeBlog = async (blogToRemove) => {
     try {
-      if (window.confirm(`Do you really want to remove ${blogToRemove.title}?`))
+      const result = window.confirm(`Do you really want to remove ${blogToRemove.title}?`)
+      if (result) {
         await blogService.remove(blogToRemove.id)
-      setBlogs(blogs.filter(blog => blog.id !== blogToRemove.id))
+        setBlogs(blogs.filter(blog => blog.id !== blogToRemove.id))
+      } 
     } catch (exception) {
       setStatusMessage({ message: 'deleting the blog was not successful', isError: true })
       setTimeout(() => {
