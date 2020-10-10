@@ -89,6 +89,17 @@ describe('Blog app', function() {
           expect(blogs).to.have.length(1)
         })
       })
+      it('Blogs are sorted by likes', function() {
+        cy.contains('Jukan vaalipeli')
+          .contains('view').click()
+
+        cy.contains('Jukan vaalipeli').parent().parent().find('#likes').as('likeContainer')
+        .find('button').click()
+        cy.get('.togglableContent')
+        .then( blogs => {
+          cy.wrap(blogs[0]).find('span').contains(1)
+        })
+      })
     })
   })
 })
