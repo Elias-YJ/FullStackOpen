@@ -5,6 +5,7 @@ const Username = ({ username, changeHandler }) => (
   <div>
     username
     <input
+      id="username"
       type="text"
       value={username}
       name="Username"
@@ -17,6 +18,7 @@ const Password = ({ password, changeHandler }) => (
   <div>
     password
     <input
+      id="password"
       type="password"
       value={password}
       name="Password"
@@ -30,7 +32,9 @@ const Login = (({ credentials, loginHandler }) => {
     <form onSubmit={loginHandler} method='post'>
       <Username username={credentials.username.text} changeHandler={credentials.username.handler}/>
       <Password password={credentials.password.text} changeHandler={credentials.password.handler}/>
-      <button type="submit">login</button>
+      <button type="submit" id="login-button">
+        login
+      </button>
     </form>
   )
 })
