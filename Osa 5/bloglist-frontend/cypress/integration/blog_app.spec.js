@@ -50,15 +50,26 @@ describe('Blog app', function() {
       cy.contains('Mato Matalan seikkailut Richard Scarry')
     })
 
-    it('A blog can be created with command', function() {
-      cy.createBlog({ 
-        title:'Mato Matalan seikkailut', 
-        author:'Richard Scarry', 
-        url:'www.richardscarry.com'
+    describe('and several blogs exist', function() {
+      beforeEach(function() {
+        cy.login({ username: 'mluukkai', password: 'salainen' })
+        cy.createBlog({ 
+          title:'Mato Matalan seikkailut', 
+          author:'Richard Scarry', 
+          url:'www.richardscarry.com'
+        })
+        cy.createBlog({ 
+          title:'Jukan vaalipeli', 
+          author:'Martti Ahtisaari', 
+          url:'www.presidentti.fi'
+        })
       })
+      it('A blog can be liked', function() {
+        cy.contains('Jukan vaalipeli')
+          .contains('view').click()
 
-      cy.contains('Mato Matalan seikkailut Richard Scarry')
+        cy.contains('Jukan vaalipeli').parent().parent().find('#likes').as('likeContainer').find('button').click()
+      })
     })
-
   })
 })
