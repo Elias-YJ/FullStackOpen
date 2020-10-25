@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { Container, Table, Button } from 'react-bootstrap'
 import Blog from './components/Blog'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
@@ -47,10 +48,18 @@ const App = () => {
       setUsername('')
       setPassword('')
       setUser(user)
-      notifyWith(`${user.name} welcome back!`)
+      notifyWith(
+        {
+          heading: 'Hi!',
+          body: `Welcome back ${user.name}!`
+        })
       storage.saveUser(user)
     } catch(exception) {
-      notifyWith('wrong username/password', 'error')
+      notifyWith(
+        {
+          heading: 'wrong username/password',
+          body: 'Please try again'
+        }, 'error')
     }
   }
 
@@ -59,7 +68,11 @@ const App = () => {
       const newBlog = await blogService.create(blog)
       blogFormRef.current.toggleVisibility()
       setBlogs(blogs.concat(newBlog))
-      notifyWith(`a new blog '${newBlog.title}' by ${newBlog.author} added!`)
+      notifyWith(
+        {
+          heading: 'New blog!',
+          body: `${newBlog.title} by ${newBlog.author} was added.`
+        })
     } catch(exception) {
       console.log(exception)
     }
@@ -88,11 +101,9 @@ const App = () => {
 
   if ( !user ) {
     return (
-      <div>
-        <h2>login to application</h2>
-
+      <Container>
+        <h2>Login to application</h2>
         <Notification notification={notification} />
-
         <form onSubmit={handleLogin}>
           <div>
             username
@@ -110,38 +121,39 @@ const App = () => {
               onChange={({ target }) => setPassword(target.value)}
             />
           </div>
-          <button id='login'>login</button>
+          <Button id='login' type="submit">login</Button>
         </form>
-      </div>
+      </Container>
     )
   }
 
   const byLikes = (b1, b2) => b2.likes - b1.likes
 
   return (
-    <div>
-      <h2>blogs</h2>
-
+    <Container>
+      <h2>Blogs</h2>
       <Notification notification={notification} />
-
       <p>
-        {user.name} logged in <button onClick={handleLogout}>logout</button>
+        {user.name} logged in <Button onClick={handleLogout}>logout</Button>
       </p>
 
-      <Togglable buttonLabel='create new blog'  ref={blogFormRef}>
+      <Togglable buttonLabel='Create new blog'  ref={blogFormRef}>
         <NewBlog createBlog={createBlog} />
       </Togglable>
-
-      {blogs.sort(byLikes).map(blog =>
-        <Blog
-          key={blog.id}
-          blog={blog}
-          handleLike={handleLike}
-          handleRemove={handleRemove}
-          own={user.username===blog.user.username}
-        />
-      )}
-    </div>
+      <Table hover>
+        <tbody>
+          {blogs.sort(byLikes).map(blog =>
+            <Blog
+              key={blog.id}
+              blog={blog}
+              handleLike={handleLike}
+              handleRemove={handleRemove}
+              own={user.username===blog.user.username}
+            />
+          )}
+        </tbody>
+      </Table>
+    </Container>
   )
 }
 
