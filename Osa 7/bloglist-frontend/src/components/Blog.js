@@ -22,6 +22,12 @@ const Blog = ({ blog, handleLike, handleRemove, own }) => {
       </div>
       <div>{blog.user.name}</div>
       {own&&<Button onClick={() => handleRemove(blog.id)}>remove</Button>}
+      <h3 className='mt-md-5'>Comments</h3>
+      <ul>
+        {blog.comments.map(comment =>
+          <li key={comment.length}>{comment}</li>
+        )}
+      </ul>
     </Container>
   )
 }
