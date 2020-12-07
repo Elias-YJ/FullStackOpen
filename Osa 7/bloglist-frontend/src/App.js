@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { connect } from 'react-redux'
-import { Container, Table, Button, Navbar, NavbarBrand, NavLink, Nav } from 'react-bootstrap'
-import { Switch, Route, Link, Redirect, useHistory } from 'react-router-dom'
+import { Container, Table, Button } from 'react-bootstrap'
+import { Switch, Route, Redirect, useRouteMatch } from 'react-router-dom'
 import Blog from './components/Blog'
+import ListBlog from './components/ListBlog'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
 import NewBlog from './components/NewBlog'
@@ -19,14 +20,14 @@ const App = (props) => {
   const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const history = useHistory()
 
   const blogFormRef = React.createRef()
 
   useEffect(() => {
-    blogService.getAll().then(blogs =>
+    blogService.getAll().then(blogs => {
       setBlogs(blogs)
-    )
+      console.log(blogs.length)
+    })
   }, [])
 
   useEffect(() => {
@@ -82,6 +83,11 @@ const App = (props) => {
     storage.logoutUser()
   }
 
+  const match = useRouteMatch('/blogs/:id')
+  const blog = match
+    ? blogs.find(blog => blog.id === match.params.id)
+    : null
+
   if ( !props.user ) {
     return (
       <Container>
@@ -112,12 +118,21 @@ const App = (props) => {
 
   const byLikes = (b1, b2) => b2.likes - b1.likes
 
+
   return (
     <Container>
       <Navigation handleLogout={handleLogout}/>
       <Notification />
       <br />
       <Switch>
+        <Route path='/blogs/:id'>
+          <Blog
+            blog={blog}
+            handleLike={handleLike}
+            handleRemove={handleRemove}
+            own={blog ? props.user.username===blog.user.username : false}
+          />
+        </Route>
         <Route path='/blogs'>
           <Togglable buttonLabel='Create new blog'  ref={blogFormRef}>
             <NewBlog createBlog={createBlog} />
@@ -125,7 +140,7 @@ const App = (props) => {
           <Table hover>
             <tbody>
               {blogs.sort(byLikes).map(blog =>
-                <Blog
+                <ListBlog
                   key={blog.id}
                   blog={blog}
                   handleLike={handleLike}

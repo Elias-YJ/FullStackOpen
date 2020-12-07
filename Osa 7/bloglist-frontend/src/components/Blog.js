@@ -1,33 +1,28 @@
 import React, { useState } from 'react'
+import { Link } from 'react-router-dom'
 import PropTypes from 'prop-types'
-import { Collapse, Button } from 'react-bootstrap'
+import { Container, Button } from 'react-bootstrap'
 
 const Blog = ({ blog, handleLike, handleRemove, own }) => {
   const [visible, setVisible] = useState(false)
   const label = visible ? 'hide' : 'view'
 
   return (
-    <tr className='blog' key={blog.id}>
-      <td>
-        <i>{blog.title}</i>
-        <Collapse in={visible}>
-          <div>
-            <div>{blog.url}</div>
-            <div>likes {blog.likes}
-              <button onClick={() => handleLike(blog.id)}>like</button>
-            </div>
-            <div>{blog.user.name}</div>
-            {own&&<button onClick={() => handleRemove(blog.id)}>remove</button>}
-          </div>
-        </Collapse>
-      </td>
-      <td>
-      by {blog.author}
-      </td>
-      <td>
-        <Button onClick={() => setVisible(!visible)}>{label}</Button>
-      </td>
-    </tr>
+    <Container>
+      <h2>
+        {blog.title}
+      </h2>
+      <div>
+        by {blog.author}
+      </div>
+      <Link>{blog.url}</Link>
+      <br />
+      <div>likes {blog.likes}
+        <Button onClick={() => handleLike(blog.id)}>like</Button>
+      </div>
+      <div>{blog.user.name}</div>
+      {own&&<Button onClick={() => handleRemove(blog.id)}>remove</Button>}
+    </Container>
   )
 }
 
@@ -36,6 +31,7 @@ Blog.propTypes = {
     title: PropTypes.string.isRequired,
     author: PropTypes.string.isRequired,
     url: PropTypes.string.isRequired,
+    id: PropTypes.string.isRequired,
   }).isRequired,
   handleLike: PropTypes.func.isRequired,
   handleRemove: PropTypes.func.isRequired,
