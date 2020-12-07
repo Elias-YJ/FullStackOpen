@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { useDispatch } from 'react-redux'
+import { connect } from 'react-redux'
 import { Container, Table, Button } from 'react-bootstrap'
 import Blog from './components/Blog'
 import Notification from './components/Notification'
@@ -12,14 +12,13 @@ import storage from './utils/storage'
 
 import { setNotification } from './reducers/notificationReducer'
 
-const App = () => {
+const App = (props) => {
   const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
 
   const blogFormRef = React.createRef()
-  const dispatch = useDispatch()
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -41,10 +40,10 @@ const App = () => {
       setUsername('')
       setPassword('')
       setUser(user)
-      dispatch(setNotification('Hi', `Welcome back ${user.name}`, 'success', 5))
+      props.setNotification('Hi', `Welcome back ${user.name}`, 'success', 5)
       storage.saveUser(user)
     } catch(exception) {
-      dispatch(setNotification('Wrong username/password', 'Please try again', 'error', 5))
+      props.setNotification('Wrong username/password', 'Please try again', 'error', 5)
     }
   }
 
@@ -53,7 +52,7 @@ const App = () => {
       const newBlog = await blogService.create(blog)
       blogFormRef.current.toggleVisibility()
       setBlogs(blogs.concat(newBlog))
-      dispatch(setNotification('New blog!', `${newBlog.title} by ${newBlog.author} was added.`, 'success', 5))
+      props.setNotification('New blog!', `${newBlog.title} by ${newBlog.author} was added.`, 'success', 5)
     } catch(exception) {
       console.log(exception)
     }
@@ -138,4 +137,9 @@ const App = () => {
   )
 }
 
-export default App
+const ConnectedApp = connect(
+  null,
+  { setNotification },
+)(App)
+
+export default ConnectedApp
