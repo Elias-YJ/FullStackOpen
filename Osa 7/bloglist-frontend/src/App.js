@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { useDispatch } from 'react-redux'
 import { Container, Table, Button } from 'react-bootstrap'
 import Blog from './components/Blog'
 import Notification from './components/Notification'
@@ -9,14 +10,16 @@ import blogService from './services/blogs'
 import loginService from './services/login'
 import storage from './utils/storage'
 
+import { setNotification } from './reducers/notificationReducer'
+
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [notification, setNotification] = useState(null)
 
   const blogFormRef = React.createRef()
+  const dispatch = useDispatch()
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -29,37 +32,19 @@ const App = () => {
     setUser(user)
   }, [])
 
-  const notifyWith = (message, type='success') => {
-    setNotification({
-      message, type
-    })
-    setTimeout(() => {
-      setNotification(null)
-    }, 5000)
-  }
-
   const handleLogin = async (event) => {
     event.preventDefault()
     try {
       const user = await loginService.login({
         username, password
       })
-
       setUsername('')
       setPassword('')
       setUser(user)
-      notifyWith(
-        {
-          heading: 'Hi!',
-          body: `Welcome back ${user.name}!`
-        })
+      dispatch(setNotification('Hi', `Welcome back ${user.name}`, 'success', 5))
       storage.saveUser(user)
     } catch(exception) {
-      notifyWith(
-        {
-          heading: 'wrong username/password',
-          body: 'Please try again'
-        }, 'error')
+      dispatch(setNotification('Wrong username/password', 'Please try again', 'error', 5))
     }
   }
 
@@ -68,11 +53,7 @@ const App = () => {
       const newBlog = await blogService.create(blog)
       blogFormRef.current.toggleVisibility()
       setBlogs(blogs.concat(newBlog))
-      notifyWith(
-        {
-          heading: 'New blog!',
-          body: `${newBlog.title} by ${newBlog.author} was added.`
-        })
+      dispatch(setNotification('New blog!', `${newBlog.title} by ${newBlog.author} was added.`, 'success', 5))
     } catch(exception) {
       console.log(exception)
     }
@@ -103,7 +84,7 @@ const App = () => {
     return (
       <Container>
         <h2>Login to application</h2>
-        <Notification notification={notification} />
+        <Notification />
         <form onSubmit={handleLogin}>
           <div>
             username
@@ -132,7 +113,7 @@ const App = () => {
   return (
     <Container>
       <h2>Blogs</h2>
-      <Notification notification={notification} />
+      <Notification />
       <p>
         {user.name} logged in <Button onClick={handleLogout}>logout</Button>
       </p>

@@ -1,34 +1,25 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
+import { connect } from 'react-redux'
 import { Alert } from 'react-bootstrap'
+import { setNotification } from '../reducers/notificationReducer'
 
-const Notification = ({ notification }) => {
-  const [show, setShow] = useState(false)
+const Notification = (props) => {
+  const variant = props.notification.alertType === 'success' ? 'success' : 'danger'
+  return (
+    <Alert variant={variant} style={{ display: props.notification.content.length===0 ? 'none' : '' }} onClose={() => setNotification('', '', '', null)} dismissible>
+      <Alert.Heading>{props.notification.heading}</Alert.Heading>
+      <p>
+        {props.notification.content}
+      </p>
+    </Alert>
+  )
+}
 
-  useEffect(() => {
-    if ( !notification ) {
-      setShow(false)
-    } else {
-      setShow(true)
-    }
-  },[notification])
-
-  if ( !notification ) {
-    return null
-  }
-
-  if (show){
-    const variant = notification.type === 'success' ? 'success' : 'danger'
-    return (
-      <Alert variant={variant} onClose={() => setShow(false)} dismissible>
-        <Alert.Heading>{notification.message.heading}</Alert.Heading>
-        <p>
-          {notification.message.body}
-        </p>
-      </Alert>
-    )
-  } else {
-    return null
+const mapStateToProps = (state) => {
+  return {
+    notification: state.notification
   }
 }
 
-export default Notification
+const ConnectedNotification = connect(mapStateToProps)(Notification)
+export default ConnectedNotification
