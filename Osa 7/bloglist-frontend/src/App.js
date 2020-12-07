@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { connect } from 'react-redux'
-import { Container, Table, Button } from 'react-bootstrap'
+import { Container, Table, Button, Navbar, NavbarBrand, NavLink, Nav } from 'react-bootstrap'
+import { Switch, Route, Link, Redirect, useHistory } from 'react-router-dom'
 import Blog from './components/Blog'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
 import NewBlog from './components/NewBlog'
+import Navigation from './components/Navigation'
 
 import blogService from './services/blogs'
 import loginService from './services/login'
@@ -17,6 +19,7 @@ const App = (props) => {
   const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+  const history = useHistory()
 
   const blogFormRef = React.createRef()
 
@@ -111,28 +114,35 @@ const App = (props) => {
 
   return (
     <Container>
-      <h2>Blogs</h2>
+      <Navigation handleLogout={handleLogout}/>
       <Notification />
-      <p>
-        {props.user.name} logged in <Button onClick={handleLogout}>logout</Button>
-      </p>
-
-      <Togglable buttonLabel='Create new blog'  ref={blogFormRef}>
-        <NewBlog createBlog={createBlog} />
-      </Togglable>
-      <Table hover>
-        <tbody>
-          {blogs.sort(byLikes).map(blog =>
-            <Blog
-              key={blog.id}
-              blog={blog}
-              handleLike={handleLike}
-              handleRemove={handleRemove}
-              own={props.user.username===blog.user.username}
-            />
-          )}
-        </tbody>
-      </Table>
+      <br />
+      <Switch>
+        <Route path='/blogs'>
+          <Togglable buttonLabel='Create new blog'  ref={blogFormRef}>
+            <NewBlog createBlog={createBlog} />
+          </Togglable>
+          <Table hover>
+            <tbody>
+              {blogs.sort(byLikes).map(blog =>
+                <Blog
+                  key={blog.id}
+                  blog={blog}
+                  handleLike={handleLike}
+                  handleRemove={handleRemove}
+                  own={props.user.username===blog.user.username}
+                />
+              )}
+            </tbody>
+          </Table>
+        </Route>
+        <Route path='/users'>
+          <h2>Users</h2>
+        </Route>
+        <Route path='/'>
+          <Redirect to='/blogs' />
+        </Route>
+      </Switch>
     </Container>
   )
 }
