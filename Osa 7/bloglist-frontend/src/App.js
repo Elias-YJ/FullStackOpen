@@ -11,10 +11,10 @@ import loginService from './services/login'
 import storage from './utils/storage'
 
 import { setNotification } from './reducers/notificationReducer'
+import { loginUser, logoutUser } from './reducers/userReducer'
 
 const App = (props) => {
   const [blogs, setBlogs] = useState([])
-  const [user, setUser] = useState(null)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
 
@@ -28,7 +28,7 @@ const App = (props) => {
 
   useEffect(() => {
     const user = storage.loadUser()
-    setUser(user)
+    props.loginUser(user)
   }, [])
 
   const handleLogin = async (event) => {
@@ -39,7 +39,7 @@ const App = (props) => {
       })
       setUsername('')
       setPassword('')
-      setUser(user)
+      props.loginUser(user)
       props.setNotification('Hi', `Welcome back ${user.name}`, 'success', 5)
       storage.saveUser(user)
     } catch(exception) {
@@ -75,11 +75,11 @@ const App = (props) => {
   }
 
   const handleLogout = () => {
-    setUser(null)
+    props.logoutUser()
     storage.logoutUser()
   }
 
-  if ( !user ) {
+  if ( !props.user ) {
     return (
       <Container>
         <h2>Login to application</h2>
@@ -114,7 +114,7 @@ const App = (props) => {
       <h2>Blogs</h2>
       <Notification />
       <p>
-        {user.name} logged in <Button onClick={handleLogout}>logout</Button>
+        {props.user.name} logged in <Button onClick={handleLogout}>logout</Button>
       </p>
 
       <Togglable buttonLabel='Create new blog'  ref={blogFormRef}>
@@ -128,7 +128,7 @@ const App = (props) => {
               blog={blog}
               handleLike={handleLike}
               handleRemove={handleRemove}
-              own={user.username===blog.user.username}
+              own={props.user.username===blog.user.username}
             />
           )}
         </tbody>
@@ -137,9 +137,16 @@ const App = (props) => {
   )
 }
 
+const mapStateToProps = (state) => {
+  return {
+    notification: state.notification,
+    user: state.user
+  }
+}
+
 const ConnectedApp = connect(
-  null,
-  { setNotification },
+  mapStateToProps,
+  { setNotification, loginUser, logoutUser },
 )(App)
 
 export default ConnectedApp
